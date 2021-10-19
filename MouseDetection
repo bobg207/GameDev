@@ -1,0 +1,80 @@
+import pygame
+
+# create color constants
+WHITE = (255, 255, 255)
+RED = (255,0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+
+# width by height
+FPS = 60
+DISPLAY_WIDTH = 700
+DISPLAY_HEIGHT = 500
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x_loc, y_loc, width, height, window):
+        super(Player, self).__init__()
+        self.surface = pygame.Surface((width, height))
+        self.surface.fill(GREEN)
+        # self.rectangle = pygame.draw.rect(surface, GREEN, (x_loc, y_loc, width, height))
+        self.rect = self.surface.get_rect(center=(x_loc, y_loc))
+        self.window = window
+        self.y_loc = y_loc
+        self.x_loc = x_loc
+        self.velo = 0
+        self.counter = 0
+
+    def draw_player(self):
+        self.window.blit(self.surface, self.rect)
+
+    def update(self):
+        if self.counter % 2 == 0:
+            self.surface.fill(RED)
+        elif self.counter % 2 == 1:
+            self.surface.fill(GREEN)
+        # self.x_loc += self.velo
+
+
+pygame.init()
+screen = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
+pygame.display.set_caption("my Pygame animation")
+
+clock = pygame.time.Clock()
+
+player_width = 50
+player_height = 50
+player = Player((DISPLAY_WIDTH - player_width) / 2,
+                DISPLAY_HEIGHT - 2 * player_height,
+                player_width,
+                player_height,
+                screen)
+
+running = True
+
+while running:
+
+    # get the current mouse position and whether left mouse btn pressed
+    pos = pygame.mouse.get_pos()
+    print(pos)
+    pressed_lft = pygame.mouse.get_pressed()[0]
+    print(pressed_lft)
+
+    # Check if rectangle collided with pos and if the left mouse button was pressed
+    if player.rect.collidepoint(pos) and pressed_lft:
+        player.counter += 1
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    screen.fill(WHITE)
+    player.draw_player()
+    player.update()
+
+    pygame.display.flip()
+
+    clock.tick(FPS)
+
+pygame.quit()
